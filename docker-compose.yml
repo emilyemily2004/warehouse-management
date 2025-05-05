@@ -1,0 +1,12 @@
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app                # Mount the current directory to /app
+      - /app/node_modules     # Avoid overwriting node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev      # Use ts-node for development

@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      
+      {
+        "name": "Attach",
+        "port": 9229,
+        "request": "attach",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug TypeScript",
+        "program": "${workspaceFolder}/src/index.ts",
+        "runtimeArgs": ["-r", "ts-node/register"],
+        "cwd": "${workspaceFolder}",
+        "sourceMaps": true,
+        "outFiles": ["${workspaceFolder}/**/*.ts"]
+      }
+    ]
+  }  
