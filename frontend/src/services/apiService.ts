@@ -50,6 +50,8 @@ export const apiService = {
     api.get<boolean>(`/products/${encodeURIComponent(productName)}/canBeMade`),
   createProduct: (productName: string) => 
     api.post<string>(`/products/${encodeURIComponent(productName)}/create`),
+  deleteProduct: (productName: string) => 
+    api.post<string>(`/products/${encodeURIComponent(productName)}/delete`),
 
   // Articles
   getArticles: () => api.get<Article[]>('/articles'),

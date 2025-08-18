@@ -23,6 +23,11 @@ const Dashboard: React.FC = () => {
     loadCreatedProducts();
   }, []);
 
+  // Reset availability check when product selection changes
+  useEffect(() => {
+    setCanMake(null);
+  }, [selectedProduct]);
+
   const loadData = async () => {
     try {
       const [productsRes, articlesRes] = await Promise.all([
@@ -69,24 +74,10 @@ const Dashboard: React.FC = () => {
     }
 
     setLoading(true);
+    setError('');
     try {
-      // Find the product to get its article requirements
-      const product = products.find(p => p.name === productToDelete.name);
-      if (product) {
-        // Restore articles back to inventory by creating the product in reverse
-        // We'll add the articles back to the current stock
-        const updatedArticles = articles.map(article => {
-          const requiredArticle = product.contain_articles.find(pa => pa.art_id === article.art_id);
-          if (requiredArticle) {
-            return {
-              ...article,
-              stock: article.stock + requiredArticle.amount_of
-            };
-          }
-          return article;
-        });
-        setArticles(updatedArticles);
-      }
+      // Call backend API to restore inventory
+      await apiService.deleteProduct(productToDelete.name);
 
       // Remove from created products list using the exact product object
       const updated = createdProducts.filter(p => 
@@ -97,9 +88,16 @@ const Dashboard: React.FC = () => {
       setCreatedProducts(updated);
       localStorage.setItem('createdProducts', JSON.stringify(updated));
       
+      // Reset the availability check state since inventory has changed
+      setCanMake(null);
+      
+      // Reload data from server to get updated inventory
+      await loadData();
+      
       alert('Product deleted and articles restored to inventory!');
     } catch (err) {
       setError('Failed to delete product');
+      console.error('Delete product error:', err);
     } finally {
       setLoading(false);
     }
@@ -109,11 +107,13 @@ const Dashboard: React.FC = () => {
     if (!selectedProduct) return;
     
     setLoading(true);
+    setError('');
     try {
       const response = await apiService.canProductBeMade(selectedProduct);
       setCanMake(response.data);
     } catch (err) {
       setError('Failed to check product availability');
+      setCanMake(null);
     } finally {
       setLoading(false);
     }
@@ -123,12 +123,13 @@ const Dashboard: React.FC = () => {
     if (!selectedProduct || !isAdmin) return;
     
     setLoading(true);
+    setError('');
     try {
       await apiService.createProduct(selectedProduct);
       saveCreatedProduct(selectedProduct);
       alert('Product created successfully!');
       await loadData(); // Reload data to see updated stock
-      setCanMake(null);
+      setCanMake(null); // Reset availability check
     } catch (err) {
       setError('Failed to create product');
     } finally {

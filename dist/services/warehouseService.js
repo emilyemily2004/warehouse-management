@@ -55,5 +55,15 @@ class WarehouseService {
                 article.stock -= pa.amount_of;
         });
     }
+    restoreStockForProduct(productName) {
+        const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
+        if (!product)
+            throw new Error("Product not found");
+        product.contain_articles.forEach((pa) => {
+            const article = this.articles.find((a) => a.art_id === pa.art_id);
+            if (article)
+                article.stock += pa.amount_of;
+        });
+    }
 }
 exports.WarehouseService = WarehouseService;

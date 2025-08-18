@@ -56,24 +56,44 @@ cd ..
 ### 3. Start Database
 
 ```bash
-# Start PostgreSQL database
-docker-compose up postgres -d
+# Start PostgreSQL database with Docker Compose
+docker-compose up -d
 ```
 
 ### 4. Run the Application
 
-#### Option A: Run Both Backend and Frontend Together
+#### Backend (Required - Run First)
 ```bash
-npm run dev:full
+# Clean build and start backend server
+npm run build
+npm run dev
 ```
 
-#### Option B: Run Separately
-```bash
-# Terminal 1: Backend (http://localhost:3000)
-npm run dev:backend
+The backend will be available at:
+- **API Server**: http://localhost:3000
+- **Swagger Docs**: http://localhost:3000/api-docs
 
-# Terminal 2: Frontend (http://localhost:3001)
-npm run dev:frontend
+#### Frontend (Run in separate terminal)
+```bash
+# Navigate to frontend directory and start React app
+cd frontend
+npm install
+npm start
+```
+
+The frontend will be available at:
+- **React App**: http://localhost:3001
+
+#### Full Stack Quick Start Commands
+```bash
+# Terminal 1: Start database and backend
+docker-compose up -d
+npm run build
+npm run dev
+
+# Terminal 2: Start frontend (in new terminal)
+cd frontend
+npm start
 ```
 
 ## Access Points
@@ -217,10 +237,38 @@ npm test
 
 ## Troubleshooting
 
+### Clean Build and Restart
+If you encounter issues, try a clean build:
+
+```bash
+# Clean backend build
+Remove-Item -Recurse -Force dist -ErrorAction SilentlyContinue
+npm run build
+
+# Clean frontend build
+cd frontend
+Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+npm install
+cd ..
+```
+
 ### Database Connection Issues
 1. Ensure Docker is running
 2. Check if PostgreSQL container is running: `docker-compose ps`
 3. Verify environment variables in `.env`
+4. Restart database: `docker-compose down && docker-compose up -d`
+
+### Frontend Won't Start
+1. Make sure you're in the frontend directory: `cd frontend`
+2. Reinstall dependencies: `npm install`
+3. Check if port 3001 is available
+4. Try: `npm start`
+
+### Backend Issues
+1. Ensure database is running first: `docker-compose up -d`
+2. Build TypeScript: `npm run build`
+3. Check environment variables in `.env`
+4. Start with: `npm run dev`
 
 ### CORS Issues
 - The backend is configured to allow all origins in development

@@ -123,5 +123,47 @@ export default function createProductRouter(warehouseService: WarehouseService) 
         }
     });
 
+    /**
+     * @swagger
+     * /products/{productName}/delete:
+     *   post:
+     *     summary: Delete a product and restore stock
+     *     description: Restores the articles back to inventory when a product is deleted.
+     *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: productName
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: Name of the product to delete (e.g., Dinning Chair or Dinning Table)
+     *     responses:
+     *       200:
+     *         description: Stock restored successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: string
+     *       401:
+     *         description: Unauthorized
+     *       404:
+     *         description: Product not found
+     *       500:
+     *         description: Internal server error
+     */
+    router.post("/:productName/delete", authMiddleware.authenticateToken, authMiddleware.requireAdmin, (req: Request, res: Response) => {
+        try {
+            const productName = req.params.productName;
+            
+            warehouseService.restoreStockForProduct(productName);
+            res.status(200).send(`Stock restored after deleting: '${productName}'`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+            res.status(500).send(errorMessage);
+        }
+    });
+
     return router;
 }
