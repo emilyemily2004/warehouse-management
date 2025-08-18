@@ -1,5 +1,240 @@
 ## Warehouse Management System
 
+A full-stack web application for warehouse management with authentication and authorization.
+
+## Features
+
+- **Authentication & Authorization**: JWT-based auth with admin/user roles
+- **Product Management**: View products, check if they can be made, create products (admin only)
+- **Inventory Management**: View current stock levels of articles
+- **REST API**: Complete API with Swagger documentation
+- **Frontend**: React TypeScript application with responsive design
+
+## Tech Stack
+
+### Backend
+- Node.js with Express
+- TypeScript
+- PostgreSQL database
+- JWT authentication
+- Swagger/OpenAPI documentation
+- Docker support
+
+### Frontend
+- React with TypeScript
+- React Router for navigation
+- Axios for API calls
+- Context API for state management
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- Docker and Docker Compose
+- Git
+
+## Quick Start
+
+### 1. Clone and Setup
+
+```bash
+git clone <repository-url>
+cd warehouse-management
+```
+
+### 2. Install Dependencies
+
+```bash
+# Install backend dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+```
+
+### 3. Start Database
+
+```bash
+# Start PostgreSQL database
+docker-compose up postgres -d
+```
+
+### 4. Run the Application
+
+#### Option A: Run Both Backend and Frontend Together
+```bash
+npm run dev:full
+```
+
+#### Option B: Run Separately
+```bash
+# Terminal 1: Backend (http://localhost:3000)
+npm run dev:backend
+
+# Terminal 2: Frontend (http://localhost:3001)
+npm run dev:frontend
+```
+
+## Access Points
+
+- **Frontend Application**: http://localhost:3001
+- **Backend API**: http://localhost:3000
+- **Swagger Documentation**: http://localhost:3000/api-docs
+
+## Default Accounts
+
+The database comes pre-populated with demo accounts:
+
+### Admin Account
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Permissions**: Full access (can create products)
+
+### User Account
+- **Username**: `user`
+- **Password**: `user123`
+- **Permissions**: Read-only access
+
+## API Documentation
+
+Visit http://localhost:3000/api-docs after starting the backend to explore the API with Swagger UI.
+
+### Authentication
+
+All protected endpoints require a Bearer token in the Authorization header:
+
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+You can get a token by:
+1. Using the `/auth/login` endpoint
+2. Using the "Authorize" button in Swagger UI
+3. Logging in through the frontend application
+
+### Key Endpoints
+
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login user
+- `GET /auth/profile` - Get user profile
+- `GET /products` - List all products
+- `GET /products/{name}/canBeMade` - Check if product can be made
+- `POST /products/{name}/create` - Create product (admin only)
+- `GET /articles` - List all articles
+
+## Database Schema
+
+The PostgreSQL database includes:
+
+### Users Table
+- `id` - Primary key
+- `username` - Unique username
+- `email` - Unique email
+- `password_hash` - Bcrypt hashed password
+- `role` - User role (admin/user)
+- `created_at` - Account creation timestamp
+
+## Project Structure
+
+```
+warehouse-management/
+├── src/                     # Backend source code
+│   ├── database/           # Database connection and services
+│   ├── middleware/         # Auth middleware
+│   ├── models/            # Data models/interfaces
+│   ├── routes/            # API route handlers
+│   ├── services/          # Business logic services
+│   └── server.ts          # Main server file
+├── frontend/              # React frontend application
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── contexts/      # React context providers
+│   │   └── services/      # API service layer
+├── tests/                 # Test files
+├── docker-compose.yml     # Docker services configuration
+├── init.sql              # Database initialization script
+└── README.md             # This file
+```
+
+## Development
+
+### Environment Variables
+
+#### Backend (.env)
+```
+PORT=3000
+DATABASE_URL=postgresql://warehouse_user:warehouse_pass@localhost:5432/warehouse_db
+JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
+JWT_EXPIRES_IN=24h
+INVENTORY_FILE=./inventory.json
+PRODUCTS_FILE=./products.json
+```
+
+#### Frontend (frontend/.env)
+```
+PORT=3001
+REACT_APP_API_URL=http://localhost:3000
+```
+
+### Database Management
+
+```bash
+# Start only database
+docker-compose up postgres -d
+
+# View database logs
+docker-compose logs postgres
+
+# Connect to database
+docker-compose exec postgres psql -U warehouse_user -d warehouse_db
+
+# Stop database
+docker-compose down
+```
+
+### Building for Production
+
+```bash
+# Build backend
+npm run build
+
+# Build frontend
+cd frontend
+npm run build
+```
+
+## Testing
+
+```bash
+# Run backend tests
+npm test
+
+# Run frontend tests
+cd frontend
+npm test
+```
+
+## Troubleshooting
+
+### Database Connection Issues
+1. Ensure Docker is running
+2. Check if PostgreSQL container is running: `docker-compose ps`
+3. Verify environment variables in `.env`
+
+### CORS Issues
+- The backend is configured to allow all origins in development
+- For production, update CORS settings in `src/server.ts`
+
+### Authentication Issues
+- Check JWT_SECRET in environment variables
+- Verify token expiration (default: 24h)
+- Clear browser local storage if needed
+
+## License
+
+MIT License
+
 This is a Node.js and TypeScript-based application designed to manage a warehouse's inventory and products. The `WarehouseService` class provides core functionalities to load articles and products from JSON files, check product availability based on stock levels, and update stock when products are created. The project includes a RESTful API built with Express, Swagger documentation, and support for Docker and MongoDB integration.
 
 ### Features
@@ -115,7 +350,7 @@ The application loads data from `inventory.json` and `products.json` by default.
   {
     "products": [
       {
-        "name": "Dining Chair",
+        "name": "Dinning Chair",
         "contain_articles": [
           { "art_id": "1", "amount_of": "4" },
           { "art_id": "2", "amount_of": "8" },
@@ -143,15 +378,15 @@ The API is documented with Swagger. Key endpoints include:
 
 - **GET `/products`**:
   - Returns a list of all products.
-  - Example response: `[{ "name": "Dining Chair", "contain_articles": [...] }]`
+  - Example response: `[{ "name": "Dinning Chair", "contain_articles": [...] }]`
 
 - **GET `/products/:productName/canBeMade`**:
   - Checks if a product can be made based on stock.
-  - Example: `GET /products/Dining Chair/canBeMade` returns `{ true }`
+  - Example: `GET /products/Dinning Chair/canBeMade` returns `{ true }`
 
 - **POST `/products/:productName/create`**:
   - Creates a product and updates stock if possible.
-  - Example: `POST /products/Dining Chair/create` returns `{ "Stock updated after creating: 'Dining Chair'" }` or an error.
+  - Example: `POST /products/Dinning Chair/create` returns `{ "Stock updated after creating: 'Dinning Chair'" }` or an error.
 
 ### Testing
 

@@ -36,7 +36,7 @@ class WarehouseService {
         return this.products;
     }
     canProductBeMade(productName) {
-        const product = this.products.find((p) => p.name === productName);
+        const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         if (!product)
             throw new Error("Product not found");
         return product.contain_articles.every((pa) => {
@@ -48,7 +48,7 @@ class WarehouseService {
         if (!this.canProductBeMade(productName)) {
             throw new Error("Insufficient stock to make product");
         }
-        const product = this.products.find((p) => p.name === productName);
+        const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         product === null || product === void 0 ? void 0 : product.contain_articles.forEach((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             if (article)

@@ -15,11 +15,11 @@ describe("WarehouseService", () => {
   });
 
   it("should verify if a product can be made", () => {
-    expect(warehouseService.canProductBeMade("Dining Chair")).toBe(true);
+    expect(warehouseService.canProductBeMade("Dinning Chair")).toBe(true);
   });
 
   it("should reduce stock when a product is made", () => {
-    warehouseService.reduceStockForProduct("Dining Chair");
+    warehouseService.reduceStockForProduct("Dinning Chair");
     const articles = warehouseService.getArticles();
     const leg = articles.find((a) => a.art_id === "1");
     expect(leg?.stock).toBe(8); // Assuming initial stock of 12

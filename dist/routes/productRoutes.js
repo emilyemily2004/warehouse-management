@@ -1,17 +1,19 @@
-import express, { Request, Response } from "express";
-import { WarehouseService } from "../services/warehouseService";
-import { AuthMiddleware } from "../middleware/authMiddleware";
-
-export default function createProductRouter(warehouseService: WarehouseService) {
-    const router = express.Router();
-    const authMiddleware = new AuthMiddleware();
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = createProductRouter;
+const express_1 = __importDefault(require("express"));
+const authMiddleware_1 = require("../middleware/authMiddleware");
+function createProductRouter(warehouseService) {
+    const router = express_1.default.Router();
+    const authMiddleware = new authMiddleware_1.AuthMiddleware();
     // Disable caching
     router.use((req, res, next) => {
         res.setHeader("Cache-Control", "no-store");
         next();
     });
-
     /**
      * @swagger
      * /products:
@@ -33,10 +35,9 @@ export default function createProductRouter(warehouseService: WarehouseService) 
      *       401:
      *         description: Unauthorized
      */
-    router.get("/", authMiddleware.authenticateToken, authMiddleware.requireUser, (req: Request, res: Response) => {
+    router.get("/", authMiddleware.authenticateToken, authMiddleware.requireUser, (req, res) => {
         res.json(warehouseService.getProducts());
     });
-
     /**
      * @swagger
      * /products/{productName}/canBeMade:
@@ -65,17 +66,17 @@ export default function createProductRouter(warehouseService: WarehouseService) 
      *       404:
      *         description: Product not found
      */
-    router.get("/:productName/canBeMade", authMiddleware.authenticateToken, authMiddleware.requireUser, (req: Request, res: Response) => {
+    router.get("/:productName/canBeMade", authMiddleware.authenticateToken, authMiddleware.requireUser, (req, res) => {
         try {
             const productName = req.params.productName;
             console.log("Received productName:", productName);
             res.json(warehouseService.canProductBeMade(productName));
-        } catch (error) {
+        }
+        catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
             res.status(404).send(errorMessage);
         }
     });
-
     /**
      * @swagger
      * /products/{productName}/create:
@@ -106,22 +107,22 @@ export default function createProductRouter(warehouseService: WarehouseService) 
      *       500:
      *         description: Internal server error
      */
-    router.post("/:productName/create", authMiddleware.authenticateToken, authMiddleware.requireAdmin, (req: Request, res: Response) => {
+    router.post("/:productName/create", authMiddleware.authenticateToken, authMiddleware.requireAdmin, (req, res) => {
         try {
             const productName = req.params.productName;
-            
             if (warehouseService.canProductBeMade(productName)) {
                 console.log(`'${productName}' can be made.`);
                 warehouseService.reduceStockForProduct(productName);
                 res.status(200).send(`Stock updated after creating: '${productName}'`);
-            } else {
+            }
+            else {
                 res.status(400).send(`'${productName}' cannot be made due to insufficient stock.`);
             }
-        } catch (error) {
+        }
+        catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
             res.status(500).send(errorMessage);
         }
     });
-
     return router;
 }

@@ -23,6 +23,6 @@ function createProduct(productName) {
     }
 }
 // Process products
-["Dining Chair", "Dinning Table", "Dinning Table"].forEach(createProduct);
+["Dinning Chair", "Dinning Table", "Dinning Table"].forEach(createProduct);
 // Display updated data
 console.log("Updated Articles:", warehouseService.getArticles());

@@ -1,17 +1,19 @@
-import express, { Request, Response } from "express";
-import { WarehouseService } from "../services/warehouseService";
-import { AuthMiddleware } from "../middleware/authMiddleware";
-
-export default function createArticleRouter(warehouseService: WarehouseService) {
-    const router = express.Router();
-    const authMiddleware = new AuthMiddleware();
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = createArticleRouter;
+const express_1 = __importDefault(require("express"));
+const authMiddleware_1 = require("../middleware/authMiddleware");
+function createArticleRouter(warehouseService) {
+    const router = express_1.default.Router();
+    const authMiddleware = new authMiddleware_1.AuthMiddleware();
     // Disable caching
     router.use((req, res, next) => {
         res.setHeader('Cache-Control', 'no-store');
         next();
     });
-
     /**
      * @swagger
      * /articles:
@@ -40,9 +42,8 @@ export default function createArticleRouter(warehouseService: WarehouseService) 
      *       401:
      *         description: Unauthorized
      */
-    router.get("/", authMiddleware.authenticateToken, authMiddleware.requireUser, (req: Request, res: Response) => {
+    router.get("/", authMiddleware.authenticateToken, authMiddleware.requireUser, (req, res) => {
         res.json(warehouseService.getArticles());
     });
-
     return router;
 }
