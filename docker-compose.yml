@@ -1,5 +1,17 @@
 
 services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: warehouse_db
+      POSTGRES_USER: warehouse_user
+      POSTGRES_PASSWORD: warehouse_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   app:
     build: .
     ports:
@@ -9,4 +21,10 @@ services:
       - /app/node_modules     # Avoid overwriting node_modules
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://warehouse_user:warehouse_pass@postgres:5432/warehouse_db
     command: npm run dev      # Use ts-node for development
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
