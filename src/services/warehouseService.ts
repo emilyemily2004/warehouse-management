@@ -35,9 +35,9 @@ export class WarehouseService {
         return this.products;
     }
 
-    canProductBeMade(productName: string): boolean {
+    canProductBeMade(productName: string): boolean | null {
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
-        if (!product) throw new Error("Product not found");
+        if (!product) return null; // Product not found
 
         return product.contain_articles.every((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
@@ -45,25 +45,27 @@ export class WarehouseService {
         });
     }
 
-    reduceStockForProduct(productName: string): void {
-        if (!this.canProductBeMade(productName)) {
-            throw new Error("Insufficient stock to make product");
-        }
+    reduceStockForProduct(productName: string): boolean {
+        const canMake = this.canProductBeMade(productName);
+        if (canMake === null) return false; // Product not found
+        if (!canMake) return false; // Insufficient stock
 
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         product?.contain_articles.forEach((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             if (article) article.stock -= pa.amount_of;
         });
+        return true;
     }
 
-    restoreStockForProduct(productName: string): void {
+    restoreStockForProduct(productName: string): boolean {
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
-        if (!product) throw new Error("Product not found");
+        if (!product) return false; // Product not found
 
         product.contain_articles.forEach((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             if (article) article.stock += pa.amount_of;
         });
+        return true;
     }
 }

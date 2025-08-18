@@ -69,10 +69,17 @@ export default function createProductRouter(warehouseService: WarehouseService) 
         try {
             const productName = req.params.productName;
             console.log("Received productName:", productName);
-            res.json(warehouseService.canProductBeMade(productName));
+            
+            const canBeMade = warehouseService.canProductBeMade(productName);
+            if (canBeMade === null) {
+                res.status(404).json({ error: "Product not found" });
+                return;
+            }
+            
+            res.json(canBeMade);
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            res.status(404).send(errorMessage);
+            console.error('Can be made route error:', error);
+            res.status(500).json({ error: "Failed to check product availability" });
         }
     });
 
@@ -110,16 +117,26 @@ export default function createProductRouter(warehouseService: WarehouseService) 
         try {
             const productName = req.params.productName;
             
-            if (warehouseService.canProductBeMade(productName)) {
+            const canBeMade = warehouseService.canProductBeMade(productName);
+            if (canBeMade === null) {
+                res.status(404).json({ error: "Product not found" });
+                return;
+            }
+            
+            if (canBeMade) {
                 console.log(`'${productName}' can be made.`);
-                warehouseService.reduceStockForProduct(productName);
-                res.status(200).send(`Stock updated after creating: '${productName}'`);
+                const success = warehouseService.reduceStockForProduct(productName);
+                if (success) {
+                    res.status(200).json({ message: `Stock updated after creating: '${productName}'` });
+                } else {
+                    res.status(500).json({ error: "Failed to update stock" });
+                }
             } else {
-                res.status(400).send(`'${productName}' cannot be made due to insufficient stock.`);
+                res.status(400).json({ error: `'${productName}' cannot be made due to insufficient stock.` });
             }
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            res.status(500).send(errorMessage);
+            console.error('Create product route error:', error);
+            res.status(500).json({ error: "Failed to create product" });
         }
     });
 
@@ -157,11 +174,15 @@ export default function createProductRouter(warehouseService: WarehouseService) 
         try {
             const productName = req.params.productName;
             
-            warehouseService.restoreStockForProduct(productName);
-            res.status(200).send(`Stock restored after deleting: '${productName}'`);
+            const success = warehouseService.restoreStockForProduct(productName);
+            if (success) {
+                res.status(200).json({ message: `Stock restored after deleting: '${productName}'` });
+            } else {
+                res.status(404).json({ error: "Product not found" });
+            }
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            res.status(500).send(errorMessage);
+            console.error('Delete product route error:', error);
+            res.status(500).json({ error: "Failed to delete product" });
         }
     });
 

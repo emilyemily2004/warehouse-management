@@ -32,14 +32,20 @@ export class AuthMiddleware {
         }
 
         try {
-            const decoded = this.authService.verifyToken(token);
+            const result = await this.authService.verifyToken(token);
+            if (!result.success) {
+                res.status(403).json({ error: result.error || 'Invalid or expired token' });
+                return;
+            }
+
             req.user = {
-                userId: decoded.userId,
-                username: decoded.username,
-                role: decoded.role
+                userId: result.data.userId,
+                username: result.data.username,
+                role: result.data.role
             };
             next();
         } catch (error) {
+            console.error('Authentication error:', error);
             res.status(403).json({ error: 'Invalid or expired token' });
             return;
         }

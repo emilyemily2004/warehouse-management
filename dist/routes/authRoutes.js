@@ -115,12 +115,16 @@ function createAuthRouter() {
                 res.status(400).json({ error: "Password must be at least 6 characters long" });
                 return;
             }
-            const user = yield authService.register({ username, email, password });
-            res.status(201).json(user);
+            const result = yield authService.register({ username, email, password });
+            if (!result.success) {
+                res.status(400).json({ error: result.error });
+                return;
+            }
+            res.status(201).json(result.data);
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Registration failed";
-            res.status(400).json({ error: errorMessage });
+            console.error('Registration route error:', error);
+            res.status(500).json({ error: "Registration failed" });
         }
     }));
     /**
@@ -153,11 +157,15 @@ function createAuthRouter() {
                 return;
             }
             const result = yield authService.login({ username, password });
-            res.json(result);
+            if (!result.success) {
+                res.status(401).json({ error: result.error });
+                return;
+            }
+            res.json(result.data);
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Login failed";
-            res.status(401).json({ error: errorMessage });
+            console.error('Login route error:', error);
+            res.status(500).json({ error: "Login failed" });
         }
     }));
     /**

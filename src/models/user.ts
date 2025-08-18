@@ -26,3 +26,14 @@ export interface UserResponse {
     role: string;
     created_at: Date;
 }
+
+export interface AuthResult<T = any> {
+    success: boolean;
+    data?: T;
+    error?: string;
+}
+
+export interface LoginResult {
+    user: UserResponse;
+    token: string;
+}

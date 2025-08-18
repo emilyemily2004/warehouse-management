@@ -38,32 +38,36 @@ class WarehouseService {
     canProductBeMade(productName) {
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         if (!product)
-            throw new Error("Product not found");
+            return null; // Product not found
         return product.contain_articles.every((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             return article && article.stock >= pa.amount_of;
         });
     }
     reduceStockForProduct(productName) {
-        if (!this.canProductBeMade(productName)) {
-            throw new Error("Insufficient stock to make product");
-        }
+        const canMake = this.canProductBeMade(productName);
+        if (canMake === null)
+            return false; // Product not found
+        if (!canMake)
+            return false; // Insufficient stock
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         product === null || product === void 0 ? void 0 : product.contain_articles.forEach((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             if (article)
                 article.stock -= pa.amount_of;
         });
+        return true;
     }
     restoreStockForProduct(productName) {
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
         if (!product)
-            throw new Error("Product not found");
+            return false; // Product not found
         product.contain_articles.forEach((pa) => {
             const article = this.articles.find((a) => a.art_id === pa.art_id);
             if (article)
                 article.stock += pa.amount_of;
         });
+        return true;
     }
 }
 exports.WarehouseService = WarehouseService;

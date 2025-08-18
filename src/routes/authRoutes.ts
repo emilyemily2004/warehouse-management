@@ -106,11 +106,16 @@ export default function createAuthRouter() {
                 return;
             }
 
-            const user = await authService.register({ username, email, password });
-            res.status(201).json(user);
+            const result = await authService.register({ username, email, password });
+            if (!result.success) {
+                res.status(400).json({ error: result.error });
+                return;
+            }
+
+            res.status(201).json(result.data);
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Registration failed";
-            res.status(400).json({ error: errorMessage });
+            console.error('Registration route error:', error);
+            res.status(500).json({ error: "Registration failed" });
         }
     });
 
@@ -146,10 +151,15 @@ export default function createAuthRouter() {
             }
 
             const result = await authService.login({ username, password });
-            res.json(result);
+            if (!result.success) {
+                res.status(401).json({ error: result.error });
+                return;
+            }
+
+            res.json(result.data);
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Login failed";
-            res.status(401).json({ error: errorMessage });
+            console.error('Login route error:', error);
+            res.status(500).json({ error: "Login failed" });
         }
     });
 

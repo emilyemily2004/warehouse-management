@@ -41,19 +41,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in on app start
-    console.log('AuthContext: Checking for saved token...');
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
-    
-    console.log('AuthContext: Saved token:', savedToken ? 'exists' : 'none');
-    console.log('AuthContext: Saved user:', savedUser ? 'exists' : 'none');
     
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
     }
     setIsLoading(false);
-    console.log('AuthContext: Initialization complete');
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
@@ -109,8 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAdmin = user?.role === 'admin';
 
   if (isLoading) {
-    console.log('AuthContext: Still loading...');
-    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading authentication...</div>;
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>;
   }
 
   return (
