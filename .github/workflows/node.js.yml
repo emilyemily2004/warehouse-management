@@ -1,0 +1,45 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Warehouse Management CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install backend
+      run: npm install
+    - name: Build backend
+      run: npm run build
+    - name: Test backend
+      run: npm test -- --coverage
+
+    - name: Install frontend
+      run: |
+       cd frontend
+       npm install
+    - name: Build frontend
+      run: |
+       cd frontend
+       npm start
+    - name: Test frontend
+      run: |
+       cd frontend
+       npm test -- --watchAll=false --coverage
+
+    - name: Deploy (Docker)
+      run: docker-compose up -d
