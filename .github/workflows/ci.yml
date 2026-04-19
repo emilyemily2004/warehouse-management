@@ -10,7 +10,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build-test-deply:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +29,12 @@ jobs:
           
     - name: Install backend
       run: npm install
+
+    - name: Start services using Docker Compose
+      run: docker-compose up -d
+
+    - name: Wait for database
+      run: sleep 10
       
     - name: Build backend
       run: npm run build
@@ -51,5 +57,8 @@ jobs:
        cd frontend
        npm test -- --watchAll=false --coverage
 
-    - name: Deploy (Docker)
-      run: docker-compose up -d
+    - name: Verify deployment
+      run: docker-compose ps
+
+    - name: Show database logs
+      run: docker-compose logs postgres
