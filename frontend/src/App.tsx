@@ -1,11 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
+import Dashboard from './components/Dashboard';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import Register from './components/Register';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -34,13 +34,13 @@ const AppRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div className="App">
           <AppRoutes />
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 };
 
