@@ -47,7 +47,7 @@ export class WarehouseService {
 
     reduceStockForProduct(productName: string): boolean {
         const canMake = this.canProductBeMade(productName);
-        if (canMake === null) return false; // Product not found
+        if (canMake === null) throw new Error(`Product "${productName}" not found`); // Product not found
         if (!canMake) return false; // Insufficient stock
 
         const product = this.products.find((p) => p.name.toLowerCase() === productName.toLowerCase());
