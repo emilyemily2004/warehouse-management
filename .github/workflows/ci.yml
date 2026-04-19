@@ -58,7 +58,7 @@ jobs:
        npm test -- --watchAll=false --coverage
 
     - name: Verify deployment
-      run: docker-compose ps
+      run: docker compose ps
 
     - name: Show database logs
-      run: docker-compose logs postgres
+      run: docker compose logs postgres
