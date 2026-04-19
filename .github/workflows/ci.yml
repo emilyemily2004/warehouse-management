@@ -10,8 +10,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  build-test-deply:
     runs-on: ubuntu-latest
 
     strategy:
@@ -21,10 +20,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+          
     - name: Install backend
       run: npm install
+      
     - name: Build backend
       run: npm run build
+      
     - name: Test backend
       run: npm test -- --coverage
 
@@ -32,10 +40,12 @@ jobs:
       run: |
        cd frontend
        npm install
+       
     - name: Build frontend
       run: |
        cd frontend
-       npm start
+       npm run build
+       
     - name: Test frontend
       run: |
        cd frontend
