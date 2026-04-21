@@ -13,24 +13,19 @@ jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v4
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 22.x
         cache: npm
           
     - name: Install backend
       run: npm install
 
-    - name: Start services using Docker Compose
+    - name: Start Database services using Docker Compose
       run: docker compose up -d
 
     - name: Wait for database
@@ -56,6 +51,9 @@ jobs:
       run: |
        cd frontend
        npm test -- --watchAll=false --coverage
+
+    - name: System Deployment
+      run: docker compose up --build -d
 
     - name: Verify deployment
       run: docker compose ps
