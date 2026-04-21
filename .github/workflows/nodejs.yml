@@ -53,7 +53,7 @@ jobs:
        npm test -- --watchAll=false --coverage
 
     - name: System Deployment
-      run: docker compose --build -d
+      run: docker compose up --build -d
 
     - name: Verify deployment
       run: docker compose ps
