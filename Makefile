@@ -1,5 +1,5 @@
 # Mark targets as phony to avoid conflicts with files of the same name
-.PHONY: install build test deploy wait-db verify clean ci 
+.PHONY: install build test deploy-staging wait-db verify clean ci 
 
 # Install dependencies
 install:
@@ -45,4 +45,4 @@ clean:
 	docker compose down -v
 
 # Run the full CI pipeline
-ci: install build test deploy wait-db verify
+ci: install build test deploy-staging wait-db verify
