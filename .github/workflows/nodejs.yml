@@ -52,8 +52,8 @@ jobs:
        cd frontend
        npm test -- --watchAll=false --coverage
 
-    - name: System Deployment
-      run: docker compose up --build -d
+    - name: Staging Deployment
+      run: docker compose -f docker-compose.staging.yml up --build -d
 
     - name: Verify deployment
       run: docker compose ps
