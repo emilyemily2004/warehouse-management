@@ -1,5 +1,5 @@
 # Mark targets as phony to avoid conflicts with files of the same name
-.PHONY: install build test deploy verify clean ci dev wait-db
+.PHONY: install build test deploy wait-db verify clean ci 
 
 # Install dependencies
 install:
@@ -13,13 +13,6 @@ build:
 	npm run build
 	cd frontend && npm run build
 
-# Start the development environment
-dev:
-	@echo "Starting development environment..."
-	docker compose up -d postgres
-	npm run dev &
-	cd frontend && npm start
-
 # Run tests with coverage
 test:
 	@echo "Running tests with coverage..."
@@ -29,7 +22,7 @@ test:
 # Deploy the full application
 deploy:
 	@echo "Deploying full application..."
-	docker compose up -d
+	docker compose up --build -d
 
 # Verify the deployment
 verify:
@@ -47,4 +40,4 @@ clean:
 	docker compose down -v
 
 # Run the full CI pipeline
-ci: install build deploy wait-db test verify
+ci: install build test deploy wait-db verify
