@@ -20,9 +20,14 @@ test:
 	cd frontend && CI=true npm test -- --watchAll=false --coverage
 
 # Deploy the full application
-deploy:
+deploy-development:
 	@echo "Deploying full application..."
 	docker compose up --build -d
+
+# Deploy in Staging Environment
+deploy-staging:
+	@echo "Deploying full application in staging mode..."
+	docker compose -f docker-compose.staging.yml up --build -d
 
 # Verify the deployment
 verify:
