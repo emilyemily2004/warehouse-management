@@ -25,7 +25,7 @@ jobs:
     - name: Install backend
       run: npm install
 
-    - name: Start services using Docker Compose
+    - name: Start Database services using Docker Compose
       run: docker compose up -d
 
     - name: Wait for database
@@ -51,6 +51,9 @@ jobs:
       run: |
        cd frontend
        npm test -- --watchAll=false --coverage
+
+    - name: System Deployment
+      run: docker compose --build -d
 
     - name: Verify deployment
       run: docker compose ps
