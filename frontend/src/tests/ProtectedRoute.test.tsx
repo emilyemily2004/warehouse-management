@@ -81,7 +81,7 @@ describe("ProtectedRoute Component", () => {
     );
 
     expect(
-      screen.getByText("Access denied. Admin privileges required."),
+      screen.getByText("Access are denied. Admin privileges required."),
     ).toBeInTheDocument();
   });
 
