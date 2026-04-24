@@ -1,3 +1,4 @@
+export {};
 const mockGet = jest.fn();
 const mockPost = jest.fn();
 const mockRequestInterceptorUse = jest.fn();
