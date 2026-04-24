@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
   }
 
   if (requireAdmin && !isAdmin) {
-    return <div>Access denied. Admin privileges required.</div>;
+    return <div>Access are denied. Admin privileges required.</div>;
   }
 
   return <>{children}</>;
