@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px' }}>
-      <h2>Login to Warehouse Management</h2>
+      <h2>Login to the beautiful Warehouse Management</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
           <label htmlFor="username">Username:</label>
