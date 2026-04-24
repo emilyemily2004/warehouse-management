@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1600px', margin: '0 auto' }}>
+    <div style={{ padding: '15px', maxWidth: '1800px', margin: '0 auto' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1>Warehouse Management Dashboard</h1>
         <div>
