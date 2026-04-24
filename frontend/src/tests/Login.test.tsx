@@ -38,7 +38,7 @@ describe("Login Component", () => {
     );
 
     expect(
-      screen.getByText("Login to Warehouse Management"),
+      screen.getByText("Login to the systematic Warehouse Management"),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Username:")).toBeInTheDocument();
     expect(screen.getByLabelText("Password:")).toBeInTheDocument();
