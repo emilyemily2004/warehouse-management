@@ -6,9 +6,9 @@ services:
       POSTGRES_USER: warehouse_user
       POSTGRES_PASSWORD: warehouse_pass
     ports:
-      - "5432:5432"  
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_staging_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   app:
@@ -16,11 +16,11 @@ services:
     ports:
       - "4000:3000"
     environment:
-      - NODE_ENV=staging
-      - DATABASE_URL=postgresql://warehouse_user:warehouse_pass@postgres:5432/warehouse_db
-    command: npm start
+      NODE_ENV: staging
+      DATABASE_URL: postgresql://warehouse_user:warehouse_pass@postgres:5432/warehouse_db
     depends_on:
       - postgres
+    command: npm start
 
 volumes:
-  postgres_data:
+  postgres_staging_data:
